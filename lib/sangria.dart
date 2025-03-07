@@ -4,8 +4,10 @@ import 'package:sangria/src/use-setstate-synchronously/use_setstate_synchronousl
 PluginBase createPlugin() => _SangriaLints();
 
 class _SangriaLints extends PluginBase {
+  static final _lints = [UseSetStateSynchronouslyLintRule()];
+
   @override
-  List<LintRule> getLintRules(CustomLintConfigs configs) => [
-    UseSetStateSynchronouslyLintRule(),
-  ];
+  List<LintRule> getLintRules(CustomLintConfigs configs) {
+    return _lints.where((lint) => lint.isEnabled(configs)).toList();
+  }
 }
