@@ -1,5 +1,11 @@
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
+import 'package:custom_lint_builder/custom_lint_builder.dart';
+import 'package:sangria/src/use-setstate-synchronously/use_setstate_synchronously_rule.dart';
+
+PluginBase createPlugin() => _SangriaLints();
+
+class _SangriaLints extends PluginBase {
+  @override
+  List<LintRule> getLintRules(CustomLintConfigs configs) => [
+    UseSetStateSynchronouslyLintRule(),
+  ];
 }
