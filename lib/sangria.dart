@@ -1,5 +1,5 @@
 import 'package:custom_lint_builder/custom_lint_builder.dart';
-import 'package:sangria/src/use_setstate_synchronously/use_setstate_synchronously_rule.dart';
+import 'package:sangria/src/rules/use_setstate_synchronously/use_setstate_synchronously_rule.dart';
 
 PluginBase createPlugin() => _SangriaLints();
 
