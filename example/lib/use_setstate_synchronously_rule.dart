@@ -10,13 +10,156 @@ class UseSetstateSynchronouslyRuleWidget extends StatefulWidget {
 
 class _UseSetstateSynchronouslyRuleWidgetState
     extends State<UseSetstateSynchronouslyRuleWidget> {
+  String displayText = '';
+
   @override
   void initState() {
     super.initState();
   }
 
+  Future<void> setStateAsynchronously() async {
+    // expect_lint: use_setstate_synchronously
+    setState(() {
+      displayText = 'displayText-1';
+    });
+
+    if (!mounted) {
+      // expect_lint: use_setstate_synchronously
+      setState(() {
+        displayText = 'displayText-1';
+      });
+    }
+
+    final trueCondition = true;
+    if (!mounted && trueCondition) {
+      // expect_lint: use_setstate_synchronously
+      setState(() {
+        displayText = 'displayText-1';
+      });
+    }
+
+    // nested
+    if (trueCondition) {
+      if (!mounted) {
+        // expect_lint: use_setstate_synchronously
+        setState(() {
+          displayText = 'displayText-1';
+        });
+      }
+    }
+
+    if (mounted) {
+      setState(() {
+        displayText = 'displayText';
+      });
+    }
+
+    if (mounted) {
+      setState(() {
+        displayText = 'displayText2';
+      });
+    }
+
+    if (!mounted) return;
+    setState(() {
+      displayText = 'displayText3';
+    });
+
+    if (mounted) {
+      setState(() {
+        displayText = 'displayText4';
+      });
+    }
+
+    if (mounted && trueCondition) {
+      setState(() {
+        displayText = 'displayText5';
+      });
+    }
+
+    final matched = 'matched';
+    switch (matched) {
+      case 'matched':
+        if (!mounted) {
+          // expect_lint: use_setstate_synchronously
+          setState(() {
+            displayText = 'displayText5';
+          });
+        }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return SizedBox.shrink();
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: () async => await setStateAsynchronously(),
+          child: Text('addMethodDeclaration'),
+        ),
+        GestureDetector(
+          onTap: () async {
+            // expect_lint: use_setstate_synchronously
+            setState(() {
+              displayText = 'displayText-1';
+            });
+
+            if (!mounted) {
+              // expect_lint: use_setstate_synchronously
+              setState(() {
+                displayText = 'displayText-1';
+              });
+            }
+
+            final matched = 'matched';
+            switch (matched) {
+              case 'matched':
+                // expect_lint: use_setstate_synchronously
+                setState(() {
+                  displayText = 'displayText5';
+                });
+            }
+
+            final trueCondition = true;
+            if (!mounted && trueCondition) {
+              // expect_lint: use_setstate_synchronously
+              setState(() {
+                displayText = 'displayText-1';
+              });
+            }
+
+            if (mounted) {
+              setState(() {
+                displayText = 'displayText';
+              });
+            }
+
+            if (mounted) {
+              setState(() {
+                displayText = 'displayText2';
+              });
+            }
+
+            if (!mounted) return;
+            setState(() {
+              displayText = 'displayText3';
+            });
+
+            if (mounted) {
+              setState(() {
+                displayText = 'displayText4';
+              });
+            }
+
+            if (mounted && trueCondition) {
+              setState(() {
+                displayText = 'displayText5';
+              });
+            }
+          },
+          child: Text('addFunctionExpression'),
+        ),
+      ],
+    );
   }
 }
