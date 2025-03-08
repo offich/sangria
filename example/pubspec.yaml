@@ -1,5 +1,5 @@
-name: sangria
-description: "custom lints wanted for personal developments."
+name: example
+description: "A new Flutter package project."
 version: 0.0.1
 homepage:
 
@@ -10,13 +10,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  analyzer: 7.3.0
-  analyzer_plugin: 0.13.0
-  custom_lint_builder: 0.7.5
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  sangria:
+    path: ../
+  custom_lint: 0.7.5
   flutter_lints: 5.0.0
 
 # For information on the generic Dart part of this file, see the
