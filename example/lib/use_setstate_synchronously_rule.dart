@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 
-class MyWidget extends StatefulWidget {
-  const MyWidget({super.key});
+class UseSetstateSynchronouslyRuleWidget extends StatefulWidget {
+  const UseSetstateSynchronouslyRuleWidget({super.key});
 
   @override
-  _MyWidgetState createState() => _MyWidgetState();
+  _UseSetstateSynchronouslyRuleWidgetState createState() =>
+      _UseSetstateSynchronouslyRuleWidgetState();
 }
 
-class _MyWidgetState extends State<MyWidget> {
+class _UseSetstateSynchronouslyRuleWidgetState
+    extends State<UseSetstateSynchronouslyRuleWidget> {
   @override
   void initState() {
     super.initState();
