@@ -61,14 +61,14 @@ import 'package:sangria_lints/src/rules/use_setstate_synchronously/use_setstate_
 ///
 class UseSetStateSynchronouslyLintRule extends DartLintRule {
   UseSetStateSynchronouslyLintRule()
-      : super(
-          code: LintCode(
-            name: 'use_setstate_synchronously',
-            problemMessage:
-                'Avoid calling setState across asynchronous gaps without seeing if the widget is mounted.',
-            errorSeverity: ErrorSeverity.WARNING,
-          ),
-        );
+    : super(
+        code: LintCode(
+          name: 'use_setstate_synchronously',
+          problemMessage:
+              'Avoid calling setState across asynchronous gaps without seeing if the widget is mounted.',
+          errorSeverity: ErrorSeverity.WARNING,
+        ),
+      );
 
   @override
   void run(
