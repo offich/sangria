@@ -14,7 +14,7 @@ Custom lints wanted for personal developments.
 
 ## Getting started
 
-### sangria_lints
+### Add Sangria_lints
 
 Add sangria_lints to your `pubspec.yaml`:
 
