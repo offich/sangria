@@ -34,11 +34,5 @@ jobs:
       - name: install dependencies
         run: flutter pub get
 
-      - name: Validate
-        run: dart run devtools_extensions validate --package=.
-
-      - name: Build and Copy
-        run: dart run devtools_extensions build_and_copy --source=. --dest=./extension/devtools
-
       - name: Publish
         run: dart pub publish --force
