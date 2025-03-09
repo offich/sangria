@@ -4,7 +4,7 @@ import 'package:analyzer/dart/ast/token.dart';
 import 'package:analyzer/error/error.dart' hide LintCode;
 import 'package:analyzer/error/listener.dart';
 import 'package:custom_lint_builder/custom_lint_builder.dart';
-import 'package:sangria/src/rules/use_setstate_synchronously/use_setstate_synchronously_visitor.dart';
+import 'package:sangria_lints/src/rules/use_setstate_synchronously/use_setstate_synchronously_visitor.dart';
 
 /// A `use_setstate_synchronously` rule that discourages the use of
 /// setState across asynchronous gaps within subclasses of State.

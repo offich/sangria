@@ -14,7 +14,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  sangria:
+  sangria_lints:
     path: ../
   custom_lint: 0.7.5
   flutter_lints: 5.0.0
