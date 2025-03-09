@@ -24,8 +24,7 @@ class UseSetstateSynchronouslyVisitor extends RecursiveAstVisitor<void> {
       wrappedWithNotMounted = true;
 
       final thenStatement = node.thenStatement;
-      hasEarlyReturn =
-          thenStatement is ReturnStatement ||
+      hasEarlyReturn = thenStatement is ReturnStatement ||
           (thenStatement is Block &&
               thenStatement.statements.any((s) => s is ReturnStatement));
 
