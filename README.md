@@ -1,8 +1,65 @@
-## Sangria
+# Sangria Lints
 
-Custom lints wanted for personal developments
+Custom lints wanted for personal developments.
 
-## All custom-lint rules in sangria lints
+## Table of content
+
+- [Table of content](#table-of-content)
+- [Getting started](#getting-started)
+  - [sangria\_lints](#sangria_lints)
+  - [Enable custom\_lint](#enable-custom_lint)
+  - [Disabling lint rules](#disabling-lint-rules)
+- [All custom-lint rules in sangria\_lints](#all-custom-lint-rules-in-sangria_lints)
+  - [use\_setstate\_synchronously](#use_setstate_synchronously)
+
+## Getting started
+
+### sangria_lints
+
+Add sangria_lints to your `pubspec.yaml`:
+
+```yaml
+dev_dependencies:
+  sangria_lints:
+```
+
+### Enable custom_lint
+
+sangria_lints comes bundled with its own rules using custom_lints.
+
+- Add both sangria_lints and custom_lint to your `pubspec.yaml`:
+
+  ```yaml
+  dev_dependencies:
+    sangria_lints:
+    custom_lint: # <- add this
+  ```
+
+- Enable `custom_lint`'s plugin in your `analysis_options.yaml`:
+
+  ```yaml
+  analyzer:
+    plugins:
+      - sangria_lints
+  ```
+
+### Disabling lint rules
+
+By default when installing sangria_lints, all the lints will be enabled.
+To change this, you have a few options.
+
+```yaml
+analyzer:
+  plugins:
+    - custom_lint
+
+custom_lint:
+  rules:
+    # Explicitly disable one custom-lint rule.
+    - use_setstate_synchronously: false
+```
+
+## All custom-lint rules in sangria_lints
 
 ### use_setstate_synchronously
 
@@ -13,7 +70,7 @@ Since widgets can be unmounted before a Future gets resolved, seeing if widgets 
 
 ### Example
 
-#### ❌ BAD:
+#### ❌ BAD
 
 ```dart
 class _MyWidgetState extends State<MyWidget> {
@@ -35,7 +92,7 @@ class _MyWidgetState extends State<MyWidget> {
   }
 ```
 
-#### ✅ GOOD:
+#### ✅ GOOD
 
 ```dart
 class _MyWidgetState extends State<MyWidget> {
