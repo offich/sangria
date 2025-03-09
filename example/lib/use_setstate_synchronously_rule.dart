@@ -1,4 +1,12 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+
+String generateRandomString() {
+  const String charset =
+      '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
+  return charset[Random.secure().nextInt(charset.length)];
+}
 
 class UseSetstateSynchronouslyRuleWidget extends StatefulWidget {
   const UseSetstateSynchronouslyRuleWidget({super.key});
@@ -21,14 +29,14 @@ class _UseSetstateSynchronouslyRuleWidgetState
     // simple invocation without mounted wrapped
     // expect_lint: use_setstate_synchronously
     setState(() {
-      displayText = 'displayText-1';
+      displayText = generateRandomString();
     });
 
     // invocation with not mounted wrapped
     if (!mounted) {
       // expect_lint: use_setstate_synchronously
       setState(() {
-        displayText = 'displayText-1';
+        displayText = generateRandomString();
       });
     }
 
@@ -37,7 +45,7 @@ class _UseSetstateSynchronouslyRuleWidgetState
     if (!mounted && trueCondition) {
       // expect_lint: use_setstate_synchronously
       setState(() {
-        displayText = 'displayText-1';
+        displayText = generateRandomString();
       });
     }
 
@@ -45,7 +53,7 @@ class _UseSetstateSynchronouslyRuleWidgetState
     if (!mounted || trueCondition) {
       // expect_lint: use_setstate_synchronously
       setState(() {
-        displayText = 'displayText-1';
+        displayText = generateRandomString();
       });
     }
 
@@ -54,7 +62,7 @@ class _UseSetstateSynchronouslyRuleWidgetState
       if (!mounted) {
         // expect_lint: use_setstate_synchronously
         setState(() {
-          displayText = 'displayText-1';
+          displayText = generateRandomString();
         });
       }
     }
@@ -62,34 +70,34 @@ class _UseSetstateSynchronouslyRuleWidgetState
     // invocation in combined condition
     if (mounted && trueCondition) {
       setState(() {
-        displayText = 'displayText5';
+        displayText = generateRandomString();
       });
     }
 
     // invocation with mounted wrapped
     if (mounted) {
       setState(() {
-        displayText = 'displayText';
+        displayText = generateRandomString();
       });
     }
 
     // consecutive invocation with mounted wrapped
     if (mounted) {
       setState(() {
-        displayText = 'displayText2';
+        displayText = generateRandomString();
       });
     }
 
     // invocation before early returned by not mounted
     if (!mounted) return;
     setState(() {
-      displayText = 'displayText3';
+      displayText = generateRandomString();
     });
 
     // invocation after early returned by not mounted
     if (mounted) {
       setState(() {
-        displayText = 'displayText4';
+        displayText = generateRandomString();
       });
     }
 
@@ -100,7 +108,7 @@ class _UseSetstateSynchronouslyRuleWidgetState
         if (!mounted) {
           // expect_lint: use_setstate_synchronously
           setState(() {
-            displayText = 'displayText5';
+            displayText = generateRandomString();
           });
         }
     }
@@ -119,14 +127,14 @@ class _UseSetstateSynchronouslyRuleWidgetState
             // simple invocation without mounted wrapped
             // expect_lint: use_setstate_synchronously
             setState(() {
-              displayText = 'displayText-1';
+              displayText = generateRandomString();
             });
 
             // invocation with not mounted wrapped
             if (!mounted) {
               // expect_lint: use_setstate_synchronously
               setState(() {
-                displayText = 'displayText-1';
+                displayText = generateRandomString();
               });
             }
 
@@ -135,7 +143,7 @@ class _UseSetstateSynchronouslyRuleWidgetState
             if (!mounted && trueCondition) {
               // expect_lint: use_setstate_synchronously
               setState(() {
-                displayText = 'displayText-1';
+                displayText = generateRandomString();
               });
             }
 
@@ -143,7 +151,7 @@ class _UseSetstateSynchronouslyRuleWidgetState
             if (!mounted || trueCondition) {
               // expect_lint: use_setstate_synchronously
               setState(() {
-                displayText = 'displayText-1';
+                displayText = generateRandomString();
               });
             }
 
@@ -152,7 +160,7 @@ class _UseSetstateSynchronouslyRuleWidgetState
               if (!mounted) {
                 // expect_lint: use_setstate_synchronously
                 setState(() {
-                  displayText = 'displayText-1';
+                  displayText = generateRandomString();
                 });
               }
             }
@@ -160,34 +168,34 @@ class _UseSetstateSynchronouslyRuleWidgetState
             // invocation in combined condition
             if (mounted && trueCondition) {
               setState(() {
-                displayText = 'displayText5';
+                displayText = generateRandomString();
               });
             }
 
             // invocation with mounted wrapped
             if (mounted) {
               setState(() {
-                displayText = 'displayText';
+                displayText = generateRandomString();
               });
             }
 
             // consecutive invocation with mounted wrapped
             if (mounted) {
               setState(() {
-                displayText = 'displayText2';
+                displayText = generateRandomString();
               });
             }
 
             // invocation before early returned by not mounted
             if (!mounted) return;
             setState(() {
-              displayText = 'displayText3';
+              displayText = generateRandomString();
             });
 
             // invocation after early returned by not mounted
             if (mounted) {
               setState(() {
-                displayText = 'displayText4';
+                displayText = generateRandomString();
               });
             }
 
@@ -198,7 +206,7 @@ class _UseSetstateSynchronouslyRuleWidgetState
                 if (!mounted) {
                   // expect_lint: use_setstate_synchronously
                   setState(() {
-                    displayText = 'displayText5';
+                    displayText = generateRandomString();
                   });
                 }
             }
