@@ -41,6 +41,14 @@ class _UseSetstateSynchronouslyRuleWidgetState
       });
     }
 
+    // invocation with not mounted condition or true condition combined
+    if (!mounted || trueCondition) {
+      // expect_lint: use_setstate_synchronously
+      setState(() {
+        displayText = 'displayText-1';
+      });
+    }
+
     // invocation in nested condition
     if (trueCondition) {
       if (!mounted) {
@@ -125,6 +133,14 @@ class _UseSetstateSynchronouslyRuleWidgetState
             // invocation with not mounted condition and true condition combined
             final trueCondition = true;
             if (!mounted && trueCondition) {
+              // expect_lint: use_setstate_synchronously
+              setState(() {
+                displayText = 'displayText-1';
+              });
+            }
+
+            // invocation with not mounted condition or true condition combined
+            if (!mounted || trueCondition) {
               // expect_lint: use_setstate_synchronously
               setState(() {
                 displayText = 'displayText-1';
