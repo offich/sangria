@@ -1,7 +1,13 @@
 name: sangria
 description: "custom lints wanted for personal developments."
 version: 0.0.1
-homepage:
+homepage: https://offich.me
+repository: https://github.com/offich/sangria
+issue_tracker: https://github.com/offich/sangria/issues
+topics:
+  - lints
+  - analysis
+  - code-style
 
 environment:
   sdk: ^3.7.0
