@@ -63,7 +63,7 @@ class UseSetStateSynchronouslyLintRule extends DartLintRule {
         code: LintCode(
           name: 'use_setstate_synchronously',
           problemMessage:
-              'Avoid calling setState past an await point without checking if the widget is mounted',
+              'Avoid calling setState across asynchronous gaps without seeing if the widget is mounted.',
           errorSeverity: ErrorSeverity.WARNING,
         ),
       );
