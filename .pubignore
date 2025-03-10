@@ -8,5 +8,5 @@ analysis_options.yaml
 renovate.json
 sangria.iml
 
-example/
+example/example.iml
 test/
