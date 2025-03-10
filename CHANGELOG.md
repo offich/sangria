@@ -1,3 +1,7 @@
+## 0.0.3
+
+* Publish with example directory included.
+
 ## 0.0.2
 
 * Improve score on pub.dev
