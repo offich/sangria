@@ -1,6 +1,6 @@
 name: sangria_lints
 description: "Lint Rules for personal developments created by custom_lint_builder package."
-version: 0.0.1
+version: 0.0.2
 homepage: https://offich.me
 repository: https://github.com/offich/sangria
 issue_tracker: https://github.com/offich/sangria/issues

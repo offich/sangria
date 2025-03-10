@@ -1,3 +1,8 @@
+## 0.0.2
+
+* Improve score on pub.dev
+* Fix automatic deployment by GitHub Actions
+
 ## 0.0.1
 
 * Modify README.md
