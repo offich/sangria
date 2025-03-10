@@ -1,5 +1,5 @@
 name: sangria_lints
-description: "custom lints wanted for personal developments."
+description: "Lint Rules for personal developments created by custom_lint_builder package."
 version: 0.0.1
 homepage: https://offich.me
 repository: https://github.com/offich/sangria
@@ -24,3 +24,4 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: 5.0.0
+  pana: 0.22.18
