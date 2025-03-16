@@ -19,9 +19,12 @@ jobs:
         with:
           fetch-depth: 1
 
+      - uses: offich/flutter-fvm-dart-sdk-action@v1
+        id: flutter-fvm-dart-sdk-version
+
       - uses: dart-lang/setup-dart@v1
         with:
-          sdk: 3.7.0
+          sdk: ${{ steps.flutter-fvm-dart-sdk-version.outputs.dart-version }}
 
       - uses: kuhnroyal/flutter-fvm-config-action@v3
         id: fvm-config-action
