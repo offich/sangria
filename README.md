@@ -11,6 +11,7 @@ Custom lints wanted for personal developments.
   - [Disabling lint rules](#disabling-lint-rules)
 - [All custom-lint rules in sangria\_lints](#all-custom-lint-rules-in-sangria_lints)
   - [use\_setstate\_synchronously](#use_setstate_synchronously)
+  - [avoid\_empty\_container](#avoid_empty_container)
 
 ## Getting started
 
@@ -113,4 +114,36 @@ class _MyWidgetState extends State<MyWidget> {
     );
   }
 }
+```
+
+### avoid_empty_container
+
+A `avoid_empty_container` rule that discourages the use of empty container.
+
+Since `Container` generates many properties like padding, margin, decoration, and constraints, it is perfered to use `SizedBox` instead.
+
+#### ❌ BAD
+
+```dart
+class CustomText extends StatelessWidget {
+  bool canDisplay;
+
+  @override
+    Widget build(BuildContext context) {
+      return canDisplay ? Text('canDisplay') : Container();
+    }
+  }
+```
+
+#### ✅ GOOD
+
+```dart
+class CustomText extends StatelessWidget {
+  bool canDisplay;
+
+  @override
+    Widget build(BuildContext context) {
+      return canDisplay ? Text('canDisplay') : SizedBox.shrink();
+    }
+  }
 ```
