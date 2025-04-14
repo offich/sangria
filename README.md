@@ -69,8 +69,6 @@ A `use_setstate_synchronously` rule that discourages the use of setState across 
 In async functions, the state of a widget may have been disposed across asynchronous gaps in a case when the user moves to a different screen. This leads to `setState() called after dispose()` error.
 Since widgets can be unmounted before a Future gets resolved, seeing if widgets are mounted is necessary before calling setState.
 
-### Example
-
 #### ❌ BAD
 
 ```dart
