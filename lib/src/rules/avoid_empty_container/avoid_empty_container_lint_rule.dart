@@ -19,7 +19,7 @@ import 'package:custom_lint_builder/custom_lint_builder.dart';
 ///
 ///   @override
 ///   Widget build(BuildContext context) {
-///     return canDisplay ? Container(child: Text('canDisplay')) : Container();
+///     return canDisplay ? Text('canDisplay') : Container();
 ///   }
 /// }
 /// ```
@@ -32,7 +32,7 @@ import 'package:custom_lint_builder/custom_lint_builder.dart';
 ///
 ///   @override
 ///   Widget build(BuildContext context) {
-///     return canDisplay ? Container(child: Text('canDisplay')) : SizedBox.shrink();
+///     return canDisplay ? Text('canDisplay') : SizedBox.shrink();
 ///   }
 /// }
 /// ```
