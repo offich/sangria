@@ -11,6 +11,7 @@ Custom lints wanted for personal developments.
   - [Disabling lint rules](#disabling-lint-rules)
 - [All custom-lint rules in sangria\_lints](#all-custom-lint-rules-in-sangria_lints)
   - [use\_setstate\_synchronously](#use_setstate_synchronously)
+  - [avoid\_empty\_container](#avoid_empty_container)
 
 ## Getting started
 
