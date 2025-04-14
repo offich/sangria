@@ -1,3 +1,8 @@
+## 0.1.0
+
+* Added the following lint:
+  * `avoid_empty_container`
+
 ## 0.0.3
 
 * Publish with example directory included.
