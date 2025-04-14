@@ -11,6 +11,7 @@ class UseAvoidEmptyContainerRule extends StatelessWidget {
     final widget = Container();
 
     if (true) {
+      Container(color: Colors.red);
       // expect_lint: avoid_empty_container
       Container();
       // expect_lint: avoid_empty_container
