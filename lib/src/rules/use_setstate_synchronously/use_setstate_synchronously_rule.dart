@@ -40,7 +40,7 @@ import 'package:sangria_lints/src/rules/use_setstate_synchronously/use_setstate_
 /// ```dart
 /// class _MyWidgetState extends State<MyWidget> {
 ///   String message;
-
+///
 ///   @override
 ///   Widget build(BuildContext context) {
 ///     return Button(
