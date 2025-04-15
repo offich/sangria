@@ -6,7 +6,7 @@ Custom lints wanted for personal developments.
 
 - [Table of content](#table-of-content)
 - [Getting started](#getting-started)
-  - [sangria\_lints](#sangria_lints)
+  - [Add sangria\_lints](#add-sangria_lints)
   - [Enable custom\_lint](#enable-custom_lint)
   - [Disabling lint rules](#disabling-lint-rules)
 - [All custom-lint rules in sangria\_lints](#all-custom-lint-rules-in-sangria_lints)
