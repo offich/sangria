@@ -85,11 +85,12 @@ class _MyWidgetState extends State<MyWidget> {
           setState(() {
             message = fromSharedPreference;
           });
-        },
-        child: Text(message),
-      );
-    }
+        }
+      },
+      child: Text(message),
+    );
   }
+}
 ```
 
 #### ✅ GOOD
