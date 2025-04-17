@@ -81,11 +81,11 @@ class _MyWidgetState extends State<MyWidget> {
     return Button(
       onPressed: () async {
         String fromSharedPreference = await getFromSharedPreference();
-          // LINT: Avoid calling 'setState' across asynchronous gaps without seeing if the widget is mounted.
-          setState(() {
-            message = fromSharedPreference;
-          });
-        }
+
+        // LINT: Avoid calling 'setState' across asynchronous gaps without seeing if the widget is mounted.
+        setState(() {
+          message = fromSharedPreference;
+        });
       },
       child: Text(message),
     );
