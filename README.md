@@ -81,15 +81,16 @@ class _MyWidgetState extends State<MyWidget> {
     return Button(
       onPressed: () async {
         String fromSharedPreference = await getFromSharedPreference();
-          // LINT: Avoid calling 'setState' across asynchronous gaps without seeing if the widget is mounted.
-          setState(() {
-            message = fromSharedPreference;
-          });
-        },
-        child: Text(message),
-      );
-    }
+
+        // LINT: Avoid calling 'setState' across asynchronous gaps without seeing if the widget is mounted.
+        setState(() {
+          message = fromSharedPreference;
+        });
+      },
+      child: Text(message),
+    );
   }
+}
 ```
 
 #### ✅ GOOD
@@ -128,10 +129,10 @@ class CustomText extends StatelessWidget {
   bool canDisplay;
 
   @override
-    Widget build(BuildContext context) {
-      return canDisplay ? Text('canDisplay') : Container();
-    }
+  Widget build(BuildContext context) {
+    return canDisplay ? Text('canDisplay') : Container();
   }
+}
 ```
 
 #### ✅ GOOD
@@ -141,10 +142,10 @@ class CustomText extends StatelessWidget {
   bool canDisplay;
 
   @override
-    Widget build(BuildContext context) {
-      return canDisplay ? Text('canDisplay') : SizedBox.shrink();
-    }
+  Widget build(BuildContext context) {
+    return canDisplay ? Text('canDisplay') : SizedBox.shrink();
   }
+}
 ```
 
 ### no_disabled_tests
