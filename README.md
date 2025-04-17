@@ -129,10 +129,10 @@ class CustomText extends StatelessWidget {
   bool canDisplay;
 
   @override
-    Widget build(BuildContext context) {
-      return canDisplay ? Text('canDisplay') : Container();
-    }
+  Widget build(BuildContext context) {
+    return canDisplay ? Text('canDisplay') : Container();
   }
+}
 ```
 
 #### ✅ GOOD
@@ -142,10 +142,10 @@ class CustomText extends StatelessWidget {
   bool canDisplay;
 
   @override
-    Widget build(BuildContext context) {
-      return canDisplay ? Text('canDisplay') : SizedBox.shrink();
-    }
+  Widget build(BuildContext context) {
+    return canDisplay ? Text('canDisplay') : SizedBox.shrink();
   }
+}
 ```
 
 ### no_disabled_tests
