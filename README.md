@@ -12,6 +12,7 @@ Custom lints wanted for personal developments.
 - [All custom-lint rules in sangria\_lints](#all-custom-lint-rules-in-sangria_lints)
   - [use\_setstate\_synchronously](#use_setstate_synchronously)
   - [avoid\_empty\_container](#avoid_empty_container)
+  - [no\_disabled\_tests](#no_disabled_tests)
 
 ## Getting started
 
@@ -144,4 +145,35 @@ class CustomText extends StatelessWidget {
       return canDisplay ? Text('canDisplay') : SizedBox.shrink();
     }
   }
+```
+
+### no_disabled_tests
+
+A `no_disabled_tests` rule that raises a warning about disabled tests inspired by no-disabled-tests rule in plugins for Jest and Vitest.
+
+Test and flutter_test package have a feature that allows you to temporarily mark tests as disabled.
+This feature is often helpful, however before committing changes we may want to check that all tests are running.
+
+#### ❌ BAD
+
+```dart
+void main() {
+  group('test group', () {
+    test('test', () {}, skip: true);
+
+    testWidgets('test widgets', (tester) async {}, skip: true);
+  }, skip: true)
+}
+```
+
+#### ✅ GOOD
+
+```dart
+void main() {
+  group('test group', () {
+    test('test', () {});
+
+    testWidgets('test widgets', (tester) async {});
+  })
+}
 ```
