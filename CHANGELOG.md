@@ -1,3 +1,8 @@
+## 0.2.0
+
+* Added the following lint:
+  * `no_disabled_tests`
+
 ## 0.1.0
 
 * Added the following lint:
