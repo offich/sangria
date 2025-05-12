@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -42,6 +43,21 @@ class UseWidgetRefSynchronouslyLintRule extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final counter = ref.watch(asyncStateCounterNotifierProvider);
+
+    useEffect(() {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        // expect_lint: use_widget_ref_synchronously
+        final state = ref.watch(asyncStateCounterNotifierProvider);
+        state.isOdd;
+
+        if (context.mounted) {
+          final state = ref.watch(asyncStateCounterNotifierProvider);
+          state.isEven;
+        }
+      });
+
+      return;
+    }, []);
 
     return Column(
       children: [
@@ -91,5 +107,9 @@ class AsyncStateCounterNotifier extends _$AsyncStateCounterNotifier {
 
   Future<void> incrementCounter() {
     return Future.delayed(const Duration(seconds: 2), () => state++);
+  }
+
+  Future<int> getCounter() {
+    return Future.delayed(const Duration(seconds: 1), () => state);
   }
 }
