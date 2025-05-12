@@ -82,8 +82,6 @@ class UseWidgetRefSynchronouslyLintRule extends DartLintRule {
           return false;
         });
 
-        print(refNode);
-
         final earlyReturned = isAfterEarlyReturn(refNode, visitor.earlyReturns);
 
         final isProtected = matched != null || earlyReturned;
