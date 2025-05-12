@@ -86,7 +86,7 @@ class UseWidgetRefSynchronouslyLintRule extends DartLintRule {
 
         final isProtected = matched != null || earlyReturned;
         if (!isProtected) {
-          reporter.atNode(refNode.methodName, code);
+          reporter.atNode(refNode, code);
         }
       }
     });
@@ -118,7 +118,7 @@ class UseWidgetRefSynchronouslyLintRule extends DartLintRule {
 
         final isProtected = matched != null || earlyReturned;
         if (!isProtected) {
-          reporter.atNode(refNode.methodName, code);
+          reporter.atNode(refNode, code);
         }
       }
     });
