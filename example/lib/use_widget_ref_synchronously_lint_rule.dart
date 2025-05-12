@@ -11,6 +11,7 @@ class UseWidgetRefSynchronouslyLintRule extends HookConsumerWidget {
     BuildContext context,
     WidgetRef ref,
   ) async {
+    // expect_lint: use_widget_ref_synchronously
     await ref
         .read(asyncStateCounterNotifierProvider.notifier)
         .incrementCounter();
@@ -22,6 +23,7 @@ class UseWidgetRefSynchronouslyLintRule extends HookConsumerWidget {
     }
 
     if (!context.mounted) {
+      // expect_lint: use_widget_ref_synchronously
       await ref
           .read(asyncStateCounterNotifierProvider.notifier)
           .incrementCounter();
@@ -47,6 +49,7 @@ class UseWidgetRefSynchronouslyLintRule extends HookConsumerWidget {
         GestureDetector(
           child: Text('increment'),
           onTap: () async {
+            // expect_lint: use_widget_ref_synchronously
             await ref
                 .read(asyncStateCounterNotifierProvider.notifier)
                 .incrementCounter();
@@ -58,6 +61,7 @@ class UseWidgetRefSynchronouslyLintRule extends HookConsumerWidget {
             }
 
             if (!context.mounted) {
+              // expect_lint: use_widget_ref_synchronously
               await ref
                   .read(asyncStateCounterNotifierProvider.notifier)
                   .incrementCounter();
