@@ -13,6 +13,7 @@ Custom lints wanted for personal developments.
   - [use\_setstate\_synchronously](#use_setstate_synchronously)
   - [avoid\_empty\_container](#avoid_empty_container)
   - [no\_disabled\_tests](#no_disabled_tests)
+  - [use\_widget\_ref\_synchronously](#use_widget_ref_synchronously)
 
 ## Getting started
 
@@ -177,4 +178,36 @@ void main() {
     testWidgets('test widgets', (tester) async {});
   })
 }
+```
+
+### use_widget_ref_synchronously
+
+A `use_widget_ref_synchronously` rule that discourages the use of WidgetRef across asynchronous gaps within Consumer widgets provided by Riverpod.
+
+In async functions, a widget may have been disposed across asynchronous gaps in a case when the user got back to previous screen. This leads to `Cannot use ref after the widget was disposed called` error.
+Since widgets can be unmounted before a Future gets resolved, seeing if widgets are mounted is necessary before using WidgetRef.
+
+[Riverpod](https://riverpod.dev/docs/essentials/faq#i-have-the-error-cannot-use-ref-after-the-widget-was-disposed-whats-wrong) recommends seeing if widgets are mounted to fix the error as well.
+
+#### ❌ BAD
+
+```dart
+ElevatedButton(
+  onPressed: () async {
+    await future;
+    ref.read(...); // May throw "Cannot use "ref" after the widget was disposed"
+  }
+)
+```
+
+#### ✅ GOOD
+
+```dart
+ElevatedButton(
+  onPressed: () async {
+    await future;
+    if (!context.mounted) return;
+    ref.read(...); // No longer throws
+  }
+)
 ```
