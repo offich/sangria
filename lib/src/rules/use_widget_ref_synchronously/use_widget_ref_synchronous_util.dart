@@ -8,6 +8,14 @@ bool isContextMounted(Expression expr) {
   return false;
 }
 
+bool isMountedCondition(Expression expression) {
+  if (expression is SimpleIdentifier) {
+    return expression.name == 'mounted';
+  }
+
+  return false;
+}
+
 bool isAfterEarlyReturn(MethodInvocation node, List<IfStatement> earlyReturns) {
   return earlyReturns.any((earlyReturn) => node.offset > earlyReturn.offset);
 }
