@@ -1,11 +1,9 @@
 // ignore_for_file: unintended_html_in_doc_comment
 
-import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/ast/token.dart';
 import 'package:analyzer/error/error.dart' hide LintCode;
 import 'package:analyzer/error/listener.dart';
 import 'package:custom_lint_builder/custom_lint_builder.dart';
-import 'package:sangria_lints/src/rules/use_widget_ref_synchronously/use_widget_ref_synchronous_util.dart';
 import 'package:sangria_lints/src/rules/use_widget_ref_synchronously/use_widget_ref_synchronously_visitor.dart';
 
 /// A `use_widget_ref_synchronously` rule that discourages the use of
@@ -65,30 +63,11 @@ class UseWidgetRefSynchronouslyLintRule extends DartLintRule {
         return;
       }
 
-      final visitor = UseWidgetRefSynchronouslyVisitor();
+      final visitor = UseWidgetRefSynchronouslyVisitor(
+        reporter: reporter,
+        lintCode: code,
+      );
       node.body.visitChildren(visitor);
-
-      for (final refNode in visitor.refInvocations) {
-        final matched = refNode.thisOrAncestorMatching((ancestor) {
-          if (ancestor is! IfStatement) {
-            return false;
-          }
-
-          final expression = ancestor.expression;
-          if (isContextMounted(expression)) {
-            return true;
-          }
-
-          return false;
-        });
-
-        final earlyReturned = isAfterEarlyReturn(refNode, visitor.earlyReturns);
-
-        final isProtected = matched != null || earlyReturned;
-        if (!isProtected) {
-          reporter.atNode(refNode, code);
-        }
-      }
     });
 
     context.registry.addMethodDeclaration((node) {
@@ -97,30 +76,11 @@ class UseWidgetRefSynchronouslyLintRule extends DartLintRule {
         return;
       }
 
-      final visitor = UseWidgetRefSynchronouslyVisitor();
+      final visitor = UseWidgetRefSynchronouslyVisitor(
+        reporter: reporter,
+        lintCode: code,
+      );
       node.body.visitChildren(visitor);
-
-      for (final refNode in visitor.refInvocations) {
-        final matched = refNode.thisOrAncestorMatching((ancestor) {
-          if (ancestor is! IfStatement) {
-            return false;
-          }
-
-          final expression = ancestor.expression;
-          if (isContextMounted(expression)) {
-            return true;
-          }
-
-          return false;
-        });
-
-        final earlyReturned = isAfterEarlyReturn(refNode, visitor.earlyReturns);
-
-        final isProtected = matched != null || earlyReturned;
-        if (!isProtected) {
-          reporter.atNode(refNode, code);
-        }
-      }
     });
   }
 }
