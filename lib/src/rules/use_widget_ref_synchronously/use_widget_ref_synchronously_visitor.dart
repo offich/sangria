@@ -23,7 +23,9 @@ class UseWidgetRefSynchronouslyVisitor extends RecursiveAstVisitor<void> {
     final superclass = classDecl?.extendsClause?.superclass.name2.toString();
     final condition = node.expression;
     final conditionFunc =
-        superclass == 'ConsumerState' ? isMountedCondition : isContextMounted;
+        superclass == 'ConsumerState'
+            ? isMountedCondition
+            : isContextMountedCondition;
 
     if (condition is PrefixExpression && condition.operator.lexeme == '!') {
       final operand = condition.operand;
