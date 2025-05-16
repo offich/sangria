@@ -1,3 +1,8 @@
+## 0.3.0
+
+* Add the following lint:
+  * `use_widget_ref_synchronously`
+
 ## 0.2.0
 
 * Added the following lint:
