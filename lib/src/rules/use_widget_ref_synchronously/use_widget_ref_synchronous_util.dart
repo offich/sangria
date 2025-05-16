@@ -1,8 +1,16 @@
 import 'package:analyzer/dart/ast/ast.dart';
 
-bool isContextMounted(Expression expr) {
+bool isContextMountedCondition(Expression expr) {
   if (expr is PrefixedIdentifier) {
     return expr.prefix.name == 'context' && expr.identifier.name == 'mounted';
+  }
+
+  return false;
+}
+
+bool isMountedCondition(Expression expression) {
+  if (expression is SimpleIdentifier) {
+    return expression.name == 'mounted';
   }
 
   return false;

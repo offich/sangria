@@ -19,17 +19,21 @@ class UseWidgetRefSynchronouslyVisitor extends RecursiveAstVisitor<void> {
 
   @override
   void visitIfStatement(IfStatement node) {
+    final classDecl = node.thisOrAncestorOfType<ClassDeclaration>();
+    final superclass = classDecl?.extendsClause?.superclass.name2.toString();
     final condition = node.expression;
+    final conditionFunc =
+        superclass == 'ConsumerState'
+            ? isMountedCondition
+            : isContextMountedCondition;
 
-    if (condition is PrefixExpression &&
-        condition.operator.lexeme == '!' &&
-        condition.operand is PrefixedIdentifier) {
+    if (condition is PrefixExpression && condition.operator.lexeme == '!') {
       final operand = condition.operand;
-      wrappedWithNotMounted = isContextMounted(operand);
+      wrappedWithNotMounted = conditionFunc(operand);
       hasEarlyReturn = isEarlyReturn(node.thenStatement);
       node.thenStatement.visitChildren(this);
       wrappedWithNotMounted = false;
-    } else if (isContextMounted(condition)) {
+    } else if (conditionFunc(condition)) {
       wrappedWithMounted = true;
       node.thenStatement.visitChildren(this);
       wrappedWithMounted = false;

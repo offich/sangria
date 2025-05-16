@@ -15,19 +15,19 @@ class UseWidgetRefSynchronouslyLintRule extends HookConsumerWidget {
     // expect_lint: use_widget_ref_synchronously
     await ref
         .read(asyncStateCounterNotifierProvider.notifier)
-        .incrementCounter();
+        .asyncIncrementCounter();
 
     if (context.mounted) {
-      await ref
+      ref
           .read(asyncStateCounterNotifierProvider.notifier)
-          .incrementCounter();
+          .syncIncrementCounter();
     }
 
     if (!context.mounted) {
       // expect_lint: use_widget_ref_synchronously
-      await ref
+      ref
           .read(asyncStateCounterNotifierProvider.notifier)
-          .incrementCounter();
+          .syncIncrementCounter();
       return;
     }
 
@@ -35,9 +35,7 @@ class UseWidgetRefSynchronouslyLintRule extends HookConsumerWidget {
       return;
     }
 
-    await ref
-        .read(asyncStateCounterNotifierProvider.notifier)
-        .incrementCounter();
+    ref.read(asyncStateCounterNotifierProvider.notifier).syncIncrementCounter();
   }
 
   @override
@@ -68,19 +66,19 @@ class UseWidgetRefSynchronouslyLintRule extends HookConsumerWidget {
             // expect_lint: use_widget_ref_synchronously
             await ref
                 .read(asyncStateCounterNotifierProvider.notifier)
-                .incrementCounter();
+                .asyncIncrementCounter();
 
             if (context.mounted) {
-              await ref
+              ref
                   .read(asyncStateCounterNotifierProvider.notifier)
-                  .incrementCounter();
+                  .syncIncrementCounter();
             }
 
             if (!context.mounted) {
               // expect_lint: use_widget_ref_synchronously
-              await ref
+              ref
                   .read(asyncStateCounterNotifierProvider.notifier)
-                  .incrementCounter();
+                  .syncIncrementCounter();
               return;
             }
 
@@ -88,9 +86,109 @@ class UseWidgetRefSynchronouslyLintRule extends HookConsumerWidget {
               return;
             }
 
+            ref
+                .read(asyncStateCounterNotifierProvider.notifier)
+                .syncIncrementCounter();
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class StatefulUseWidgetRefSynchronouslyLintRule
+    extends StatefulHookConsumerWidget {
+  const StatefulUseWidgetRefSynchronouslyLintRule({super.key});
+
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() {
+    return _StatefulUseWidgetRefSynchronouslyLintRuleState();
+  }
+}
+
+class _StatefulUseWidgetRefSynchronouslyLintRuleState
+    extends ConsumerState<StatefulUseWidgetRefSynchronouslyLintRule> {
+  Future<void> incrementCounterWrapper(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    // expect_lint: use_widget_ref_synchronously
+    await ref
+        .read(asyncStateCounterNotifierProvider.notifier)
+        .asyncIncrementCounter();
+
+    if (mounted) {
+      ref
+          .read(asyncStateCounterNotifierProvider.notifier)
+          .syncIncrementCounter();
+    }
+
+    if (!mounted) {
+      // expect_lint: use_widget_ref_synchronously
+      ref
+          .read(asyncStateCounterNotifierProvider.notifier)
+          .syncIncrementCounter();
+      return;
+    }
+
+    if (!mounted) {
+      return;
+    }
+
+    ref.read(asyncStateCounterNotifierProvider.notifier).syncIncrementCounter();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final counter = ref.watch(asyncStateCounterNotifierProvider);
+
+    useEffect(() {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        // expect_lint: use_widget_ref_synchronously
+        final state = ref.watch(asyncStateCounterNotifierProvider);
+        state.isOdd;
+
+        if (mounted) {
+          final state = ref.watch(asyncStateCounterNotifierProvider);
+          state.isEven;
+        }
+      });
+
+      return;
+    }, []);
+
+    return Column(
+      children: [
+        Text('counter: $counter'),
+        GestureDetector(
+          child: Text('increment'),
+          onTap: () async {
+            // expect_lint: use_widget_ref_synchronously
             await ref
                 .read(asyncStateCounterNotifierProvider.notifier)
-                .incrementCounter();
+                .asyncIncrementCounter();
+
+            if (mounted) {
+              ref
+                  .read(asyncStateCounterNotifierProvider.notifier)
+                  .syncIncrementCounter();
+            }
+
+            if (!mounted) {
+              // expect_lint: use_widget_ref_synchronously
+              ref
+                  .read(asyncStateCounterNotifierProvider.notifier)
+                  .syncIncrementCounter();
+              return;
+            }
+
+            if (!mounted) {
+              return;
+            }
+
+            ref
+                .read(asyncStateCounterNotifierProvider.notifier)
+                .syncIncrementCounter();
           },
         ),
       ],
@@ -105,8 +203,12 @@ class AsyncStateCounterNotifier extends _$AsyncStateCounterNotifier {
     return 0;
   }
 
-  Future<void> incrementCounter() {
+  Future<void> asyncIncrementCounter() {
     return Future.delayed(const Duration(seconds: 2), () => state++);
+  }
+
+  void syncIncrementCounter() {
+    state++;
   }
 
   Future<int> getCounter() {
