@@ -7,7 +7,7 @@ part of 'use_widget_ref_synchronously_lint_rule.dart';
 // **************************************************************************
 
 String _$asyncStateCounterNotifierHash() =>
-    r'283a51646ba901244877abc28771c64565761a9c';
+    r'365b25d3156473bad6173c6425546d4b46c395ca';
 
 /// See also [AsyncStateCounterNotifier].
 @ProviderFor(AsyncStateCounterNotifier)
