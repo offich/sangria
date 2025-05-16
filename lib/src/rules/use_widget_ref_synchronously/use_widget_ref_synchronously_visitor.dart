@@ -18,6 +18,27 @@ class UseWidgetRefSynchronouslyVisitor extends RecursiveAstVisitor<void> {
   });
 
   @override
+  void visitIfStatement(IfStatement node) {
+    final condition = node.expression;
+
+    if (condition is PrefixExpression &&
+        condition.operator.lexeme == '!' &&
+        condition.operand is PrefixedIdentifier) {
+      final operand = condition.operand;
+      wrappedWithNotMounted = isContextMounted(operand);
+      hasEarlyReturn = isEarlyReturn(node.thenStatement);
+      node.thenStatement.visitChildren(this);
+      wrappedWithNotMounted = false;
+    } else if (isContextMounted(condition)) {
+      wrappedWithMounted = true;
+      node.thenStatement.visitChildren(this);
+      wrappedWithMounted = false;
+    } else {
+      super.visitIfStatement(node);
+    }
+  }
+
+  @override
   void visitMethodInvocation(MethodInvocation node) {
     final target = node.realTarget;
     if (target?.staticType?.getDisplayString() != 'WidgetRef' ||
@@ -45,26 +66,5 @@ class UseWidgetRefSynchronouslyVisitor extends RecursiveAstVisitor<void> {
     }
 
     super.visitMethodInvocation(node);
-  }
-
-  @override
-  void visitIfStatement(IfStatement node) {
-    final condition = node.expression;
-
-    if (condition is PrefixExpression &&
-        condition.operator.lexeme == '!' &&
-        condition.operand is PrefixedIdentifier) {
-      final operand = condition.operand;
-      wrappedWithNotMounted = isContextMounted(operand);
-      hasEarlyReturn = isEarlyReturn(node.thenStatement);
-      node.thenStatement.visitChildren(this);
-      wrappedWithNotMounted = false;
-    } else if (isContextMounted(condition)) {
-      wrappedWithMounted = true;
-      node.thenStatement.visitChildren(this);
-      wrappedWithMounted = false;
-    } else {
-      super.visitIfStatement(node);
-    }
   }
 }
