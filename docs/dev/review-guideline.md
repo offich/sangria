@@ -1,248 +1,198 @@
-# PR レビューガイドライン
+# PR Review Guideline
 
-DevTools Extension のコードをレビューし、以下の観点で指摘してください。
+Review code for custom lint rules (`custom_lint_builder`) from the following perspectives:
 
-  - `Effective Dart のベストプラクティス遵守`
-  - `バグやクラッシュにつながる可能性`
-  - `VM Service / DTD との通信パターンの正確性`
-  - `非同期処理の危険パターン`
-  - `アイソレート変化・ホットリロードへの対応`
+  - Correctness of `LintCode` definition
+  - Appropriate AST visitor selection and traversal
+  - False positive prevention
+  - Error reporting accuracy
+  - Performance and memory safety
+  - Test coverage
 
-特に **致命的バグパターン** の検出を最優先設定。DevTools 内でクラッシュ・フリーズ・データ化け・メモリリークを引き起こす可能性のある問題を重点的にチェックしてください。
+Prioritize **false positives** and **incorrect AST traversal** as the most critical issues — rules that flag valid code or miss violations entirely undermine user trust.
 
-## DevTools Extension 固有の前提知識
+## Background Knowledge
 
-DevTools Extension は Flutter **Web** アプリとして iFrame 内で動作し、通常の Flutter アプリとは異なる制約があります。
-
-  - **通信はすべて非同期 RPC**: Extension ↔ DevTools ↔ VM Service ↔ 対象アプリ
-  - **ファイルシステムへの直接アクセス不可**: 必ず DTD (Dart Tooling Daemon) 経由
-  - **アイソレートはホットリロードで変わる**: リスナーが古いアイソレートを参照し続けると不具合
-  - **iFrame サンドボックス**: `postMessage` 以外の親ウィンドウへのアクセスは不可
-  - **`requiresConnection`** が `true`（デフォルト）のとき、未接続状態で Extension は無効化される
+Custom lint rules hook into the Dart analyzer's AST. Each rule registers visitor callbacks via `context.registry`, which are called for every matching node in every analyzed file. Unlike runtime code, lint rules must handle all valid Dart code patterns without crashing or leaking state between files.
 
 ---
 
-## レビュー観点（致命的バグ検出重点）
+## Review Checklist
 
-### VM Service / DTD 通信
+### LintCode Definition
 
-  - [ ] **サービス呼び出しのエラーハンドリング**
-    - [ ] `serviceManager.callServiceExtension()` に `try-catch` / `.catchError()` があるか
-    - [ ] 切断中・未接続時に呼び出しが発生しないよう `isServiceAvailable` を確認しているか
-    - [ ] タイムアウトが設定されており、長時間ブロックしないか
-  - [ ] **サービス拡張のレスポンス**
-    - [ ] ハンドラが必ず `ServiceExtensionResponse.result()` または `.error()` を返すか
-    - [ ] Future が複数回完了する（ホットリスタート時の二重完了）パターンがないか
-    - [ ] パラメータの JSON デコードで例外が起きてもクラッシュしないか
-  - [ ] **DTD 利用**
-    - [ ] `dtdManager` が利用不可の場合に適切にフォールバックしているか
-    - [ ] ファイル操作が DTD 経由になっているか（直接 `dart:io` は使えない）
+  - [ ] **Naming**
+    - [ ] Rule name is snake_case and uniquely identifies the rule
+    - [ ] Name matches the key used in `analysis_options.yaml`
+    - [ ] `LintCode` is defined as `static const` — a single instance is a **functional requirement**, not convention (multiple instances break `// ignore:` suppression)
+  - [ ] **Messages**
+    - [ ] `problemMessage` explains the problem, not the solution (concise, user-friendly)
+    - [ ] `correctionMessage` provides actionable guidance on how to fix it
+  - [ ] **Severity**
+    - [ ] Uses `WARNING` for stylistic/best-practice rules — `ERROR` should be reserved for code that is genuinely broken
+    - [ ] Severity is consistent with similar rules in the Dart/Flutter ecosystem
 
-### アイソレート変化・ホットリロード
+### AST Visitor
 
-  - [ ] **古いアイソレート参照**
-    - [ ] アイソレート変化時にリスナーを再登録しているか
-    - [ ] `selectedIsolate` の変化を `addListener` で監視し、処理を切り替えているか
-  - [ ] **ストリームの再購読**
-    - [ ] ホットリロード後にストリームが無効化されていないか
-    - [ ] `initState` で購読し `dispose` でキャンセルしているか
+  - [ ] **Visitor type selection**
+    - [ ] `RecursiveAstVisitor` is used when full subtree traversal is needed
+    - [ ] Targeted `context.registry.add*` callbacks are used when only specific node types are needed (more efficient than full recursion)
+  - [ ] **Node type coverage**
+    - [ ] All relevant node types are covered (e.g., both `MethodDeclaration` and `FunctionExpression` when a pattern can appear in either)
+    - [ ] Arrow functions, closures, and async constructs are considered
+  - [ ] **Visitor state management**
+    - [ ] If stateful flags are used (e.g., `wrappedWithMounted`), they are reset after each relevant block
+    - [ ] State does not leak between separate file analyses
+    - [ ] No shared mutable state between visitor instances
 
-### リスナー・サブスクリプションのリーク
+### False Positive Prevention
 
-  - [ ] **dispose 漏れ**
-    - [ ] `serviceManager` / `extensionManager` / `dtdManager` へのリスナーが `dispose()` でキャンセルされているか
-    - [ ] `StreamSubscription` が未キャンセルで放置されていないか
-    - [ ] タイマー・ポーリングが Extension タブを閉じると停止するか
+  - [ ] **Context-aware checks**
+    - [ ] Guard conditions are detected and respected (e.g., `if (mounted)`, early `return`)
+    - [ ] Parent context is examined when needed (`node.thisOrAncestorOfType<T>()`)
+  - [ ] **Type checking**
+    - [ ] `staticType?.getDisplayString()` is used for type-safe checks instead of string comparison on names
+    - [ ] `staticType` null cases are handled
+  - [ ] **No duplicate reports**
+    - [ ] The same issue is not reported multiple times for nested structures
+    - [ ] `super.visit*()` is not redundantly re-checking already-visited nodes
 
-### 接続状態管理
+### Error Reporting
 
-  - [ ] **未接続時の動作**
-    - [ ] `requiresConnection: true` の場合、未接続でサービス呼び出しを行っていないか
-    - [ ] 接続・切断イベントで UI 状態が正しく更新されるか
-  - [ ] **非同期処理中の切断**
-    - [ ] 長時間の処理中に切断が発生した場合にハンドリングされているか
+  - [ ] **Correct node selection**
+    - [ ] Reports on the most specific relevant node (e.g., method name token, not the full call expression)
+    - [ ] `reporter.atNode(node, lintCode)` is used for node-based reporting
+  - [ ] **Diagnostic location**
+    - [ ] The highlighted range in the editor points to the exact problematic code
 
-### 非同期処理の一般的な危険パターン
+### Performance & Memory
 
-  - [ ] **unawaited Future**
-    - [ ] `initState` や `afterBuild` で `await` 漏れがないか
-    - [ ] 例外がサイレントに握りつぶされていないか
-  - [ ] **並行処理の管理**
-    - [ ] 複数の `callServiceExtension` を直列で呼ぶ必要があるとき、順序保証されているか
-    - [ ] `Future.wait` で一件失敗時に残りの処理が中断されないか
+  - [ ] **No cached AST references**
+    - [ ] AST nodes, elements, and resolved types are **never** stored in fields or static variables — this causes memory leaks and stale references between analyses
+    - [ ] All processing happens within the visitor callback and is discarded immediately
+  - [ ] **Minimal work in hot paths**
+    - [ ] Early returns filter out non-matching nodes before any expensive checks
+    - [ ] No I/O or synchronous blocking operations inside visitors
 
----
+### Rule Registration
 
-### 一般的なコード品質
+  - [ ] Rule is instantiated and included in `getLintRules()` in `lib/sangria_lints.dart`
+  - [ ] Rule is exported from `lib/sangria_lints.dart`
 
-  - [ ] 可読性・保守性
-  - [ ] 設計原理の遵守
-  - [ ] **null 安全・型安全**
-    - [ ] サービスレスポンスの JSON パースで null クラッシュがないか
-    - [ ] `serviceManager` / `dtdManager` が null のまま使われていないか
-  - [ ] テスト可能性
-  - [ ] セキュリティ（サービス拡張のパラメータバリデーション）
+### Testing
 
-### プロジェクト固有
-
-  - [ ] 命名規則の統一
-    - [ ] サービス拡張のメソッド名が `ext.<packageName>.<methodName>` 形式か
-  - [ ] `config.yaml` に必須フィールド（`name`, `version`, `issueTracker`, `materialIconCodePoint`）があるか
-  - [ ] `DevToolsExtension` ウィジェットがルートに配置されているか
-  - [ ] 既存コードの整合性
-
----
-
-## レビューで出力される内容
-
-### 1. **致命的問題の指摘**
-
-  - クラッシュ・フリーズ・メモリリークの可能性
-  - VM Service / DTD の不正な使用
-  - データ損失リスク（アイソレート変化時の状態喪失など）
-  - セキュリティ上の問題
-
-### 2. **致命的バグ・クラッシュの検出パターン**
-
-  - **dispose 漏れ**: タブを閉じてもリスナーが残り続けメモリを消費
-  - **二重完了 Future**: ホットリスタートでハンドラが二度呼ばれ例外
-  - **古いアイソレート参照**: ホットリロード後に無効なアイソレートへアクセス
-  - **切断中のサービス呼び出し**: 切断後に `callServiceExtension` してクラッシュ
-  - **unawaited Future**: 例外が握りつぶされてサイレント失敗
-  - **JSON パースクラッシュ**: 不正なパラメータで `jsonDecode` が例外
-
-### 3. **改善提案**
-
-  - より堅牢な実装方法
-  - 適切な例外処理パターン
-  - エラー回復戦略の提案
-
-### 4. **具体的修正コード例**
-
-  - 修正前後のコード比較
-  - 推奨実装パターン
+  - [ ] **Example file added** under `example/lib/` demonstrating the violation
+  - [ ] **Both cases are covered**:
+    - [ ] Code that SHOULD trigger the lint
+    - [ ] Similar code that should NOT trigger the lint (false positive check)
+  - [ ] Verified with `cd example && dart run custom_lint`
+  - [ ] Edge cases are covered: nested structures, async contexts, arrow functions
 
 ---
 
-## レビュー実行時の必須チェックリスト
+## Common Pitfalls
 
-### Claude が最優先で確認すべき致命的なパターン
+  - **Forgetting to register**: Rule is defined but never added to `getLintRules()`
+  - **Wrong severity**: Using `ERROR` for stylistic lints breaks user builds
+  - **State leakage**: Visitor flag not reset → affects subsequent nodes in the same or different files
+  - **Non-const `LintCode`**: Multiple instances break `// ignore:` suppression
+  - **Incomplete node coverage**: Only checking `MethodDeclaration` but missing `FunctionExpression` (or vice versa)
+  - **String-based type matching**: Using `node.toString()` instead of `staticType?.getDisplayString()` — fragile and format-dependent
+  - **Ignoring guard conditions**: Not recognizing that `if (!mounted) return` makes the subsequent code safe
 
-#### 1. **`dispose()` でのリスナークリーンアップ漏れ**
+---
+
+## Code Examples
+
+### 1. LintCode must be `static const` (single instance)
 
 ```dart
-// 危険: タブを閉じてもリスナーが残り続ける
-class _MyExtensionState extends State<MyExtension> {
+// Bad: multiple instances break // ignore: suppression
+LintCode get lintCode => LintCode(name: 'my_rule', ...);
+
+// Good
+static const LintCode lintCode = LintCode(name: 'my_rule', ...);
+```
+
+### 2. Register for all relevant node types
+
+```dart
+// Bad: misses async callbacks defined as FunctionExpression
+@override
+void run(CustomLintResolver resolver, ErrorReporter reporter,
+    CustomLintContext context) {
+  context.registry.addMethodDeclaration((node) { ... });
+}
+
+// Good: covers both declaration forms
+@override
+void run(CustomLintResolver resolver, ErrorReporter reporter,
+    CustomLintContext context) {
+  context.registry.addMethodDeclaration((node) { ... });
+  context.registry.addFunctionExpression((node) { ... });
+}
+```
+
+### 3. Never cache AST nodes
+
+```dart
+// Bad: stale reference after re-analysis
+class MyRule extends DartLintRule {
+  AstNode? _lastVisited; // memory leak + stale across files
+
   @override
-  void initState() {
-    serviceManager.onIsolateStopped.addListener(_onIsolateStopped);
+  void run(...) {
+    context.registry.addMethodInvocation((node) {
+      _lastVisited = node; // never do this
+    });
   }
-  // dispose() が未実装 → メモリリーク
 }
 
-// 安全
-@override
-void dispose() {
-  serviceManager.onIsolateStopped.removeListener(_onIsolateStopped);
-  _subscription?.cancel();
-  super.dispose();
-}
-```
-
-#### 2. **切断チェックなしのサービス呼び出し**
-
-```dart
-// 危険: 切断中に呼び出してクラッシュ
-final result = await serviceManager.callServiceExtension('ext.myapp.getData');
-
-// 安全
-if (!serviceManager.isServiceAvailable) {
-  return; // または UI でエラー表示
-}
-final result = await serviceManager.callServiceExtension('ext.myapp.getData');
-```
-
-#### 3. **ホットリロード後の古いアイソレート参照**
-
-```dart
-// 危険: アイソレート変化を検知していない
-final isolate = serviceManager.isolateManager.selectedIsolate.value;
-await heavyOperation(isolate); // アイソレートが切り替わると無効
-
-// 安全
-serviceManager.isolateManager.selectedIsolate.addListener(_onIsolateChanged);
-// _onIsolateChanged で再初期化
-```
-
-#### 4. **サービス拡張ハンドラの二重完了**
-
-```dart
-// 危険: タイムアウト後もハンドラが完了しようとする
-Future<ServiceExtensionResponse> handler(String method, Map<String, String> params) async {
-  final result = await operation().timeout(const Duration(seconds: 5));
-  return ServiceExtensionResponse.result(jsonEncode(result)); // timeout後も到達する可能性
-}
-
-// 安全: Completer で単一完了を保証
-final completer = Completer<ServiceExtensionResponse>();
-operation().timeout(const Duration(seconds: 5)).then(
-  (r) { if (!completer.isCompleted) completer.complete(...); },
-  onError: (e) { if (!completer.isCompleted) completer.completeError(e); },
-);
-return completer.future;
-```
-
-#### 5. **unawaited な非同期処理**
-
-```dart
-// 危険: 例外が握りつぶされる
-@override
-void initState() {
-  super.initState();
-  loadData(); // await なし
-}
-
-// 安全
-@override
-void initState() {
-  super.initState();
-  unawaited(loadData().catchError((e) {
-    // エラーハンドリング
-  }));
-}
-```
-
-#### 6. **JSON パースの無防備な処理**
-
-```dart
-// 危険: 不正な JSON でクラッシュ
-Future<ServiceExtensionResponse> handler(String method, Map<String, String> params) async {
-  final data = jsonDecode(params['data']!); // null / 不正 JSON でクラッシュ
-
-// 安全
-  final rawData = params['data'];
-  if (rawData == null) {
-    return ServiceExtensionResponse.error(
-      ServiceExtensionResponse.invalidParams,
-      '"data" parameter is required',
-    );
+// Good: process immediately, hold no reference
+context.registry.addMethodInvocation((node) {
+  if (_isViolation(node)) {
+    reporter.atNode(node, lintCode);
   }
-  try {
-    final data = jsonDecode(rawData);
-    ...
-  } on FormatException catch (e) {
-    return ServiceExtensionResponse.error(
-      ServiceExtensionResponse.invalidParams,
-      'Invalid JSON: $e',
-    );
+});
+```
+
+### 4. Respect guard conditions to avoid false positives
+
+```dart
+// Rule: flag async calls after widget unmount
+
+// Should NOT flag (guarded by mounted check)
+if (!mounted) return;
+await someAsyncCall(); // safe
+
+// Should flag (no guard)
+await someAsyncCall(); // after async gap, mounted is not guaranteed
+```
+
+### 5. Reset visitor state between scopes
+
+```dart
+// Bad: flag leaks across method boundaries
+class _MyVisitor extends RecursiveAstVisitor<void> {
+  bool _seenAwait = false;
+
+  @override
+  void visitMethodDeclaration(MethodDeclaration node) {
+    super.visitMethodDeclaration(node); // _seenAwait may be true from prev method
   }
+}
+
+// Good: reset before entering each new scope
+@override
+void visitMethodDeclaration(MethodDeclaration node) {
+  _seenAwait = false;
+  super.visitMethodDeclaration(node);
 }
 ```
 
 ---
 
-## オプション
+## Options
 
-  - `--pre-commit` : コミット前チェックモード（より厳密なレビュー）
-  - `--focus=performance` : 特定の観点に絞ったレビュー
-  - `--japanese` : 日本語でのレビュー結果出力
+  - `--pre-commit`: Pre-commit check mode (stricter review)
+  - `--focus=false-positives`: Focus review on false positive risk
