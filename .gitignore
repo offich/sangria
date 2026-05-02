@@ -57,3 +57,5 @@ build/
 
 # FVM Version Cache
 .fvm/
+
+.mcp.json
