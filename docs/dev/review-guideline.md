@@ -2,11 +2,11 @@
 
 DevTools Extension のコードをレビューし、以下の観点で指摘してください。
 
-- `Effective Dart のベストプラクティス遵守`
-- `バグやクラッシュにつながる可能性`
-- `VM Service / DTD との通信パターンの正確性`
-- `非同期処理の危険パターン`
-- `アイソレート変化・ホットリロードへの対応`
+  - `Effective Dart のベストプラクティス遵守`
+  - `バグやクラッシュにつながる可能性`
+  - `VM Service / DTD との通信パターンの正確性`
+  - `非同期処理の危険パターン`
+  - `アイソレート変化・ホットリロードへの対応`
 
 特に **致命的バグパターン** の検出を最優先設定。DevTools 内でクラッシュ・フリーズ・データ化け・メモリリークを引き起こす可能性のある問題を重点的にチェックしてください。
 
@@ -14,11 +14,11 @@ DevTools Extension のコードをレビューし、以下の観点で指摘し�
 
 DevTools Extension は Flutter **Web** アプリとして iFrame 内で動作し、通常の Flutter アプリとは異なる制約があります。
 
-- **通信はすべて非同期 RPC**: Extension ↔ DevTools ↔ VM Service ↔ 対象アプリ
-- **ファイルシステムへの直接アクセス不可**: 必ず DTD (Dart Tooling Daemon) 経由
-- **アイソレートはホットリロードで変わる**: リスナーが古いアイソレートを参照し続けると不具合
-- **iFrame サンドボックス**: `postMessage` 以外の親ウィンドウへのアクセスは不可
-- **`requiresConnection`** が `true`（デフォルト）のとき、未接続状態で Extension は無効化される
+  - **通信はすべて非同期 RPC**: Extension ↔ DevTools ↔ VM Service ↔ 対象アプリ
+  - **ファイルシステムへの直接アクセス不可**: 必ず DTD (Dart Tooling Daemon) 経由
+  - **アイソレートはホットリロードで変わる**: リスナーが古いアイソレートを参照し続けると不具合
+  - **iFrame サンドボックス**: `postMessage` 以外の親ウィンドウへのアクセスは不可
+  - **`requiresConnection`** が `true`（デフォルト）のとき、未接続状態で Extension は無効化される
 
 ---
 
@@ -26,72 +26,70 @@ DevTools Extension は Flutter **Web** アプリとして iFrame 内で動作し
 
 ### VM Service / DTD 通信
 
-- [ ] **サービス呼び出しのエラーハンドリング**
-  - [ ] `serviceManager.callServiceExtension()` に
-        `try-catch` / `.catchError()` があるか
-  - [ ] 切断中・未接続時に呼び出しが発生しないよう `isServiceAvailable` を確認しているか
-  - [ ] タイムアウトが設定されており、長時間ブロックしないか
-- [ ] **サービス拡張のレスポンス**
-  - [ ] ハンドラが必ず `ServiceExtensionResponse.result()` または `.error()` を返すか
-  - [ ] Future が複数回完了する（ホットリスタート時の二重完了）パターンがないか
-  - [ ] パラメータの JSON デコードで例外が起きてもクラッシュしないか
-- [ ] **DTD 利用**
-  - [ ] `dtdManager` が利用不可の場合に適切にフォールバックしているか
-  - [ ] ファイル操作が DTD 経由になっているか（直接 `dart:io` は使えない）
+  - [ ] **サービス呼び出しのエラーハンドリング**
+    - [ ] `serviceManager.callServiceExtension()` に `try-catch` / `.catchError()` があるか
+    - [ ] 切断中・未接続時に呼び出しが発生しないよう `isServiceAvailable` を確認しているか
+    - [ ] タイムアウトが設定されており、長時間ブロックしないか
+  - [ ] **サービス拡張のレスポンス**
+    - [ ] ハンドラが必ず `ServiceExtensionResponse.result()` または `.error()` を返すか
+    - [ ] Future が複数回完了する（ホットリスタート時の二重完了）パターンがないか
+    - [ ] パラメータの JSON デコードで例外が起きてもクラッシュしないか
+  - [ ] **DTD 利用**
+    - [ ] `dtdManager` が利用不可の場合に適切にフォールバックしているか
+    - [ ] ファイル操作が DTD 経由になっているか（直接 `dart:io` は使えない）
 
 ### アイソレート変化・ホットリロード
 
-- [ ] **古いアイソレート参照**
-  - [ ] アイソレート変化時にリスナーを再登録しているか
-  - [ ] `selectedIsolate` の変化を `addListener` で監視し、処理を切り替えているか
-- [ ] **ストリームの再購読**
-  - [ ] ホットリロード後にストリームが無効化されていないか
-  - [ ] `initState` で購読し `dispose` でキャンセルしているか
+  - [ ] **古いアイソレート参照**
+    - [ ] アイソレート変化時にリスナーを再登録しているか
+    - [ ] `selectedIsolate` の変化を `addListener` で監視し、処理を切り替えているか
+  - [ ] **ストリームの再購読**
+    - [ ] ホットリロード後にストリームが無効化されていないか
+    - [ ] `initState` で購読し `dispose` でキャンセルしているか
 
 ### リスナー・サブスクリプションのリーク
 
-- [ ] **dispose 漏れ**
-  - [ ] `serviceManager` / `extensionManager` / `dtdManager`
-        へのリスナーが `dispose()` でキャンセルされているか
-  - [ ] `StreamSubscription` が未キャンセルで放置されていないか
-  - [ ] タイマー・ポーリングが Extension タブを閉じると停止するか
+  - [ ] **dispose 漏れ**
+    - [ ] `serviceManager` / `extensionManager` / `dtdManager` へのリスナーが `dispose()` でキャンセルされているか
+    - [ ] `StreamSubscription` が未キャンセルで放置されていないか
+    - [ ] タイマー・ポーリングが Extension タブを閉じると停止するか
 
 ### 接続状態管理
 
-- [ ] **未接続時の動作**
-  - [ ] `requiresConnection: true` の場合、未接続でサービス呼び出しを行っていないか
-  - [ ] 接続・切断イベントで UI 状態が正しく更新されるか
-- [ ] **非同期処理中の切断**
-  - [ ] 長時間の処理中に切断が発生した場合にハンドリングされているか
+  - [ ] **未接続時の動作**
+    - [ ] `requiresConnection: true` の場合、未接続でサービス呼び出しを行っていないか
+    - [ ] 接続・切断イベントで UI 状態が正しく更新されるか
+  - [ ] **非同期処理中の切断**
+    - [ ] 長時間の処理中に切断が発生した場合にハンドリングされているか
 
 ### 非同期処理の一般的な危険パターン
 
-- [ ] **unawaited Future**
-  - [ ] `initState` や `afterBuild` で `await` 漏れがないか
-  - [ ] 例外がサイレントに握りつぶされていないか
-- [ ] **並行処理の管理**
-  - [ ] 複数の `callServiceExtension` を直列で呼ぶ必要があるとき、順序保証されているか
-  - [ ] `Future.wait` で一件失敗時に残りの処理が中断されないか
+  - [ ] **unawaited Future**
+    - [ ] `initState` や `afterBuild` で `await` 漏れがないか
+    - [ ] 例外がサイレントに握りつぶされていないか
+  - [ ] **並行処理の管理**
+    - [ ] 複数の `callServiceExtension` を直列で呼ぶ必要があるとき、順序保証されているか
+    - [ ] `Future.wait` で一件失敗時に残りの処理が中断されないか
 
 ---
 
 ### 一般的なコード品質
 
-- [ ] 可読性・保守性
-- [ ] 設計原理の遵守
-- [ ] **null 安全・型安全**
-  - [ ] サービスレスポンスの JSON パースで null クラッシュがないか
-  - [ ] `serviceManager` / `dtdManager` が null のまま使われていないか
-- [ ] テスト可能性
-- [ ] セキュリティ（サービス拡張のパラメータバリデーション）
+  - [ ] 可読性・保守性
+  - [ ] 設計原理の遵守
+  - [ ] **null 安全・型安全**
+    - [ ] サービスレスポンスの JSON パースで null クラッシュがないか
+    - [ ] `serviceManager` / `dtdManager` が null のまま使われていないか
+  - [ ] テスト可能性
+  - [ ] セキュリティ（サービス拡張のパラメータバリデーション）
 
 ### プロジェクト固有
 
-- [ ] 命名規則の統一
-  - [ ] サービス拡張のメソッド名が `ext.<packageName>.<methodName>` 形式か
-- [ ] `config.yaml` に必須フィールド（`name`, `version`, `issueTracker`, `materialIconCodePoint`）があるか
-- [ ] `DevToolsExtension` ウィジェットがルートに配置されているか
-- [ ] 既存コードの整合性
+  - [ ] 命名規則の統一
+    - [ ] サービス拡張のメソッド名が `ext.<packageName>.<methodName>` 形式か
+  - [ ] `config.yaml` に必須フィールド（`name`, `version`, `issueTracker`, `materialIconCodePoint`）があるか
+  - [ ] `DevToolsExtension` ウィジェットがルートに配置されているか
+  - [ ] 既存コードの整合性
 
 ---
 
@@ -99,30 +97,30 @@ DevTools Extension は Flutter **Web** アプリとして iFrame 内で動作し
 
 ### 1. **致命的問題の指摘**
 
-- クラッシュ・フリーズ・メモリリークの可能性
-- VM Service / DTD の不正な使用
-- データ損失リスク（アイソレート変化時の状態喪失など）
-- セキュリティ上の問題
+  - クラッシュ・フリーズ・メモリリークの可能性
+  - VM Service / DTD の不正な使用
+  - データ損失リスク（アイソレート変化時の状態喪失など）
+  - セキュリティ上の問題
 
 ### 2. **致命的バグ・クラッシュの検出パターン**
 
-- **dispose 漏れ**: タブを閉じてもリスナーが残り続けメモリを消費
-- **二重完了 Future**: ホットリスタートでハンドラが二度呼ばれ例外
-- **古いアイソレート参照**: ホットリロード後に無効なアイソレートへアクセス
-- **切断中のサービス呼び出し**: 切断後に `callServiceExtension` してクラッシュ
-- **unawaited Future**: 例外が握りつぶされてサイレント失敗
-- **JSON パースクラッシュ**: 不正なパラメータで `jsonDecode` が例外
+  - **dispose 漏れ**: タブを閉じてもリスナーが残り続けメモリを消費
+  - **二重完了 Future**: ホットリスタートでハンドラが二度呼ばれ例外
+  - **古いアイソレート参照**: ホットリロード後に無効なアイソレートへアクセス
+  - **切断中のサービス呼び出し**: 切断後に `callServiceExtension` してクラッシュ
+  - **unawaited Future**: 例外が握りつぶされてサイレント失敗
+  - **JSON パースクラッシュ**: 不正なパラメータで `jsonDecode` が例外
 
 ### 3. **改善提案**
 
-- より堅牢な実装方法
-- 適切な例外処理パターン
-- エラー回復戦略の提案
+  - より堅牢な実装方法
+  - 適切な例外処理パターン
+  - エラー回復戦略の提案
 
 ### 4. **具体的修正コード例**
 
-- 修正前後のコード比較
-- 推奨実装パターン
+  - 修正前後のコード比較
+  - 推奨実装パターン
 
 ---
 
@@ -245,6 +243,6 @@ Future<ServiceExtensionResponse> handler(String method, Map<String, String> para
 
 ## オプション
 
-- `--pre-commit` : コミット前チェックモード（より厳密なレビュー）
-- `--focus=performance` : 特定の観点に絞ったレビュー
-- `--japanese` : 日本語でのレビュー結果出力
+  - `--pre-commit` : コミット前チェックモード（より厳密なレビュー）
+  - `--focus=performance` : 特定の観点に絞ったレビュー
+  - `--japanese` : 日本語でのレビュー結果出力
