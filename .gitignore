@@ -59,3 +59,5 @@ build/
 .fvm/
 
 .mcp.json
+
+node_modules
