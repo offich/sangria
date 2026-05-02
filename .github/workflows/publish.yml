@@ -2,8 +2,8 @@ name: Publish
 
 on:
   push:
-    branches:
-      - release
+    tags:
+      - "v*"
 
 jobs:
   publish:
@@ -41,6 +41,7 @@ jobs:
         run: dart pub publish --force
 
   release:
+    needs: [publish]
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -53,36 +54,18 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Extract version from pubspec.yaml
-        id: version
-        run: |
-          VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}')
-          VERSION_NAME=$(echo $VERSION | cut -d'+' -f1)
-          TAG_NAME="v${VERSION}"
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
-          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
-          echo "Version: $VERSION (Tag: $TAG_NAME)"
-
-      - name: Create and push tag
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag -a ${{ steps.version.outputs.tag_name }} -m "Release ${{ steps.version.outputs.version }}"
-          git push origin ${{ steps.version.outputs.tag_name }}
-
       - name: Extract release notes from CHANGELOG
         id: release_notes
         uses: octivi/release-notes-from-changelog@7e6de14efd823919839acf82f08041f885c8fca9 # v1.0.0
         with:
-          tag: ${{ steps.version.outputs.tag_name }}
+          tag: ${{ github.ref_name }}
           changelog: CHANGELOG.md
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe # v2.6.1
         with:
-          tag_name: ${{ steps.version.outputs.tag_name }}
-          name: Release ${{ steps.version.outputs.version }}
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
           body_path: ${{ steps.release_notes.outputs.release_notes }}
           draft: false
           prerelease: false
