@@ -66,14 +66,14 @@ class UseSetStateSynchronouslyLintRule extends DartLintRule {
           name: 'use_setstate_synchronously',
           problemMessage:
               'Avoid calling setState across asynchronous gaps without seeing if the widget is mounted.',
-          errorSeverity: ErrorSeverity.WARNING,
+          errorSeverity: DiagnosticSeverity.WARNING,
         ),
       );
 
   @override
   void run(
     CustomLintResolver resolver,
-    ErrorReporter reporter,
+    DiagnosticReporter reporter,
     CustomLintContext context,
   ) {
     context.registry.addMethodDeclaration((node) {

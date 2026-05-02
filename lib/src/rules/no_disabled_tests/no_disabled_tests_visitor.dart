@@ -6,7 +6,7 @@ import 'package:custom_lint_builder/custom_lint_builder.dart';
 class NoDisabledTestsVisitor extends RecursiveAstVisitor<void> {
   NoDisabledTestsVisitor({required this.reporter, required this.lintCode});
 
-  final ErrorReporter reporter;
+  final DiagnosticReporter reporter;
   final LintCode lintCode;
 
   @override

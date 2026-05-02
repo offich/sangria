@@ -47,14 +47,14 @@ class UseWidgetRefSynchronouslyLintRule extends DartLintRule {
           name: 'use_widget_ref_synchronously',
           problemMessage:
               'Avoid using WidgetRef across asynchronous gaps without seeing if the widget is mounted.',
-          errorSeverity: ErrorSeverity.WARNING,
+          errorSeverity: DiagnosticSeverity.WARNING,
         ),
       );
 
   @override
   void run(
     CustomLintResolver resolver,
-    ErrorReporter reporter,
+    DiagnosticReporter reporter,
     CustomLintContext context,
   ) {
     context.registry.addFunctionExpression((node) {
