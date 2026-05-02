@@ -41,14 +41,14 @@ class NoDisabledTestsLintRule extends DartLintRule {
         code: LintCode(
           name: 'no_disabled_tests',
           problemMessage: 'Disallows disabled tests.',
-          errorSeverity: ErrorSeverity.WARNING,
+          errorSeverity: DiagnosticSeverity.WARNING,
         ),
       );
 
   @override
   void run(
     CustomLintResolver resolver,
-    ErrorReporter reporter,
+    DiagnosticReporter reporter,
     CustomLintContext context,
   ) {
     context.registry.addFunctionExpression((node) {

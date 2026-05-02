@@ -9,7 +9,7 @@ class UseSetstateSynchronouslyVisitor extends RecursiveAstVisitor<void> {
     required this.lintCode,
   });
 
-  final ErrorReporter reporter;
+  final DiagnosticReporter reporter;
   final LintCode lintCode;
 
   bool wrappedWithMounted = false;

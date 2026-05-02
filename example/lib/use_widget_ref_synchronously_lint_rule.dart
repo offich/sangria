@@ -14,19 +14,19 @@ class UseWidgetRefSynchronouslyLintRule extends HookConsumerWidget {
   ) async {
     // expect_lint: use_widget_ref_synchronously
     await ref
-        .read(asyncStateCounterNotifierProvider.notifier)
+        .read(asyncStateCounterProvider.notifier)
         .asyncIncrementCounter();
 
     if (context.mounted) {
       ref
-          .read(asyncStateCounterNotifierProvider.notifier)
+          .read(asyncStateCounterProvider.notifier)
           .syncIncrementCounter();
     }
 
     if (!context.mounted) {
       // expect_lint: use_widget_ref_synchronously
       ref
-          .read(asyncStateCounterNotifierProvider.notifier)
+          .read(asyncStateCounterProvider.notifier)
           .syncIncrementCounter();
       return;
     }
@@ -35,21 +35,21 @@ class UseWidgetRefSynchronouslyLintRule extends HookConsumerWidget {
       return;
     }
 
-    ref.read(asyncStateCounterNotifierProvider.notifier).syncIncrementCounter();
+    ref.read(asyncStateCounterProvider.notifier).syncIncrementCounter();
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final counter = ref.watch(asyncStateCounterNotifierProvider);
+    final counter = ref.watch(asyncStateCounterProvider);
 
     useEffect(() {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         // expect_lint: use_widget_ref_synchronously
-        final state = ref.watch(asyncStateCounterNotifierProvider);
+        final state = ref.watch(asyncStateCounterProvider);
         state.isOdd;
 
         if (context.mounted) {
-          final state = ref.watch(asyncStateCounterNotifierProvider);
+          final state = ref.watch(asyncStateCounterProvider);
           state.isEven;
         }
       });
@@ -65,19 +65,19 @@ class UseWidgetRefSynchronouslyLintRule extends HookConsumerWidget {
           onTap: () async {
             // expect_lint: use_widget_ref_synchronously
             await ref
-                .read(asyncStateCounterNotifierProvider.notifier)
+                .read(asyncStateCounterProvider.notifier)
                 .asyncIncrementCounter();
 
             if (context.mounted) {
               ref
-                  .read(asyncStateCounterNotifierProvider.notifier)
+                  .read(asyncStateCounterProvider.notifier)
                   .syncIncrementCounter();
             }
 
             if (!context.mounted) {
               // expect_lint: use_widget_ref_synchronously
               ref
-                  .read(asyncStateCounterNotifierProvider.notifier)
+                  .read(asyncStateCounterProvider.notifier)
                   .syncIncrementCounter();
               return;
             }
@@ -87,7 +87,7 @@ class UseWidgetRefSynchronouslyLintRule extends HookConsumerWidget {
             }
 
             ref
-                .read(asyncStateCounterNotifierProvider.notifier)
+                .read(asyncStateCounterProvider.notifier)
                 .syncIncrementCounter();
           },
         ),
@@ -114,19 +114,19 @@ class _StatefulUseWidgetRefSynchronouslyLintRuleState
   ) async {
     // expect_lint: use_widget_ref_synchronously
     await ref
-        .read(asyncStateCounterNotifierProvider.notifier)
+        .read(asyncStateCounterProvider.notifier)
         .asyncIncrementCounter();
 
     if (mounted) {
       ref
-          .read(asyncStateCounterNotifierProvider.notifier)
+          .read(asyncStateCounterProvider.notifier)
           .syncIncrementCounter();
     }
 
     if (!mounted) {
       // expect_lint: use_widget_ref_synchronously
       ref
-          .read(asyncStateCounterNotifierProvider.notifier)
+          .read(asyncStateCounterProvider.notifier)
           .syncIncrementCounter();
       return;
     }
@@ -135,21 +135,21 @@ class _StatefulUseWidgetRefSynchronouslyLintRuleState
       return;
     }
 
-    ref.read(asyncStateCounterNotifierProvider.notifier).syncIncrementCounter();
+    ref.read(asyncStateCounterProvider.notifier).syncIncrementCounter();
   }
 
   @override
   Widget build(BuildContext context) {
-    final counter = ref.watch(asyncStateCounterNotifierProvider);
+    final counter = ref.watch(asyncStateCounterProvider);
 
     useEffect(() {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         // expect_lint: use_widget_ref_synchronously
-        final state = ref.watch(asyncStateCounterNotifierProvider);
+        final state = ref.watch(asyncStateCounterProvider);
         state.isOdd;
 
         if (mounted) {
-          final state = ref.watch(asyncStateCounterNotifierProvider);
+          final state = ref.watch(asyncStateCounterProvider);
           state.isEven;
         }
       });
@@ -165,19 +165,19 @@ class _StatefulUseWidgetRefSynchronouslyLintRuleState
           onTap: () async {
             // expect_lint: use_widget_ref_synchronously
             await ref
-                .read(asyncStateCounterNotifierProvider.notifier)
+                .read(asyncStateCounterProvider.notifier)
                 .asyncIncrementCounter();
 
             if (mounted) {
               ref
-                  .read(asyncStateCounterNotifierProvider.notifier)
+                  .read(asyncStateCounterProvider.notifier)
                   .syncIncrementCounter();
             }
 
             if (!mounted) {
               // expect_lint: use_widget_ref_synchronously
               ref
-                  .read(asyncStateCounterNotifierProvider.notifier)
+                  .read(asyncStateCounterProvider.notifier)
                   .syncIncrementCounter();
               return;
             }
@@ -187,7 +187,7 @@ class _StatefulUseWidgetRefSynchronouslyLintRuleState
             }
 
             ref
-                .read(asyncStateCounterNotifierProvider.notifier)
+                .read(asyncStateCounterProvider.notifier)
                 .syncIncrementCounter();
           },
         ),
