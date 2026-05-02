@@ -45,14 +45,14 @@ class AvoidEmptyContainerLintRule extends DartLintRule {
           name: 'avoid_empty_container',
           problemMessage:
               'Avoid an empty Container. Use SizedBox as a performance-friendly option since Container supports additional decoration and constraints, which may cause heavier processing.',
-          errorSeverity: ErrorSeverity.WARNING,
+          errorSeverity: DiagnosticSeverity.WARNING,
         ),
       );
 
   @override
   void run(
     CustomLintResolver resolver,
-    ErrorReporter reporter,
+    DiagnosticReporter reporter,
     CustomLintContext context,
   ) {
     context.registry.addInstanceCreationExpression((node) {

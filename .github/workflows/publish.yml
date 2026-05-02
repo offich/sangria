@@ -2,8 +2,8 @@ name: Publish
 
 on:
   push:
-    tags:
-      - "v*"
+    branches:
+      - release
 
 jobs:
   publish:
@@ -15,21 +15,21 @@ jobs:
       id-token: write
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 1
 
-      - uses: offich/flutter-fvm-dart-sdk-action@v1
+      - uses: offich/flutter-fvm-dart-sdk-action@8d5d0226e69fa1f55eb68662f10525b5c5473eff # v1
         id: flutter-fvm-dart-sdk-version
 
-      - uses: dart-lang/setup-dart@v1
+      - uses: dart-lang/setup-dart@65eb853c7ba17dde3be364c3d2858773e7144260 # v1.7.2
         with:
           sdk: ${{ steps.flutter-fvm-dart-sdk-version.outputs.dart-version }}
 
-      - uses: kuhnroyal/flutter-fvm-config-action@v3
+      - uses: kuhnroyal/flutter-fvm-config-action@c378498f1d1962d33039c3989411093ef8a17b2c # v3.3
         id: fvm-config-action
 
-      - uses: subosito/flutter-action@v2.18.0
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
           channel: ${{ steps.fvm-config-action.outputs.FLUTTER_CHANNEL }}
           flutter-version: ${{ steps.fvm-config-action.outputs.FLUTTER_VERSION }}
@@ -39,3 +39,50 @@ jobs:
 
       - name: Publish
         run: dart pub publish --force
+
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+
+      - name: Extract version from pubspec.yaml
+        id: version
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}')
+          VERSION_NAME=$(echo $VERSION | cut -d'+' -f1)
+          TAG_NAME="v${VERSION}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
+          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION (Tag: $TAG_NAME)"
+
+      - name: Create and push tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a ${{ steps.version.outputs.tag_name }} -m "Release ${{ steps.version.outputs.version }}"
+          git push origin ${{ steps.version.outputs.tag_name }}
+
+      - name: Extract release notes from CHANGELOG
+        id: release_notes
+        uses: octivi/release-notes-from-changelog@7e6de14efd823919839acf82f08041f885c8fca9 # v1.0.0
+        with:
+          tag: ${{ steps.version.outputs.tag_name }}
+          changelog: CHANGELOG.md
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe # v2.6.1
+        with:
+          tag_name: ${{ steps.version.outputs.tag_name }}
+          name: Release ${{ steps.version.outputs.version }}
+          body_path: ${{ steps.release_notes.outputs.release_notes }}
+          draft: false
+          prerelease: false

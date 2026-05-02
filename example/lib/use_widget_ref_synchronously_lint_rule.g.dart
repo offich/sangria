@@ -6,23 +6,58 @@ part of 'use_widget_ref_synchronously_lint_rule.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(AsyncStateCounterNotifier)
+final asyncStateCounterProvider = AsyncStateCounterNotifierProvider._();
+
+final class AsyncStateCounterNotifierProvider
+    extends $NotifierProvider<AsyncStateCounterNotifier, int> {
+  AsyncStateCounterNotifierProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'asyncStateCounterProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$asyncStateCounterNotifierHash();
+
+  @$internal
+  @override
+  AsyncStateCounterNotifier create() => AsyncStateCounterNotifier();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(int value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<int>(value),
+    );
+  }
+}
+
 String _$asyncStateCounterNotifierHash() =>
     r'365b25d3156473bad6173c6425546d4b46c395ca';
 
-/// See also [AsyncStateCounterNotifier].
-@ProviderFor(AsyncStateCounterNotifier)
-final asyncStateCounterNotifierProvider =
-    AutoDisposeNotifierProvider<AsyncStateCounterNotifier, int>.internal(
-      AsyncStateCounterNotifier.new,
-      name: r'asyncStateCounterNotifierProvider',
-      debugGetCreateSourceHash:
-          const bool.fromEnvironment('dart.vm.product')
-              ? null
-              : _$asyncStateCounterNotifierHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-typedef _$AsyncStateCounterNotifier = AutoDisposeNotifier<int>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+abstract class _$AsyncStateCounterNotifier extends $Notifier<int> {
+  int build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<int, int>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<int, int>,
+              int,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}

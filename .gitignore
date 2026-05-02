@@ -57,3 +57,7 @@ build/
 
 # FVM Version Cache
 .fvm/
+
+.mcp.json
+
+node_modules

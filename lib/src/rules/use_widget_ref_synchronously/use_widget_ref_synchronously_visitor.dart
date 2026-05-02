@@ -9,7 +9,7 @@ class UseWidgetRefSynchronouslyVisitor extends RecursiveAstVisitor<void> {
   bool wrappedWithMounted = false;
   bool wrappedWithNotMounted = false;
 
-  final ErrorReporter reporter;
+  final DiagnosticReporter reporter;
   final LintCode lintCode;
 
   UseWidgetRefSynchronouslyVisitor({
@@ -20,7 +20,7 @@ class UseWidgetRefSynchronouslyVisitor extends RecursiveAstVisitor<void> {
   @override
   void visitIfStatement(IfStatement node) {
     final classDecl = node.thisOrAncestorOfType<ClassDeclaration>();
-    final superclass = classDecl?.extendsClause?.superclass.name2.toString();
+    final superclass = classDecl?.extendsClause?.superclass.name.toString();
     final condition = node.expression;
     final conditionFunc =
         superclass == 'ConsumerState'
