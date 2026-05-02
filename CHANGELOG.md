@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+  - dev: Flutter 3.38.10
+
 ## [0.3.0] - 2025-05-16
 
 ### Added
