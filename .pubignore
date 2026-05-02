@@ -7,6 +7,11 @@
 analysis_options.yaml
 renovate.json
 sangria.iml
+CLAUDE.md
+mise.toml
+package.json
+pnpm-lock.yaml
 
 example/example.iml
+docs/
 test/
