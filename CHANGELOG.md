@@ -1,3 +1,5 @@
+# Changelog
+
 ## 0.3.0
 
 * Add the following lint:
